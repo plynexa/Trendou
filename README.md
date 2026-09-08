@@ -1,31 +1,42 @@
 # Trendou
 
-Repositório de landing pages para produtos digitais.
+Cada site tem sua própria pasta e pode ser conectado a um projeto independente na Vercel.
 
-## Air Fryer Todo Dia
+| Pasta | Conteúdo | Estado |
+| --- | --- | --- |
+| sites/air-fryer | Landing page Air Fryer Todo Dia, imagens, estilos e checkout | Pronto |
+| sites/vitrine | Reserva para a futura vitrine Trendou | Ainda sem site |
 
-Página baseada na direção visual da referência enviada pelo vendedor, com copy própria, personagem fictícia identificada como ilustrativa, 150 receitas e três bônus conferidos no PDF.
+## Publicação atual — manter funcionando
 
-- Preço atual: **R$29,90** (preço anterior exibido: R$49,90).
-- Código: `public/air-fryer/`.
-- A página inicial `/` apresenta este produto por meio da regra em `vercel.json`.
-- Novos produtos podem ter suas próprias pastas em `public/`.
-- Todos os botões de compra levam ao checkout SyncPay fornecido pelo vendedor.
+O projeto Vercel que já usa a raiz do repositório continua usando a pasta de saída public e os mesmos caminhos. O comando node scripts/build.mjs copia a fonte de sites/air-fryer para public/air-fryer durante a publicação. public é somente saída gerada; não edite nem envie cópias dos arquivos ali.
 
-## Importar na Vercel
+A configuração de compatibilidade está no vercel.json da raiz. Se houver um Build Command substituído manualmente no painel Vercel, use node scripts/build.mjs ou remova a substituição para usar a configuração do arquivo. Não é necessário instalar dependências.
 
-Importe este repositório e use a branch `main`. Mantenha a raiz do projeto na raiz do repositório, não na pasta do produto. O projeto é estático: preset Other, sem comando de instalação ou build. O arquivo `vercel.json` define a pasta de saída `public` e a página inicial.
+## Novo projeto Vercel independente para Air Fryer
 
-O nome de projeto desejado pelo vendedor é `trendo`. O domínio `trendo.vercel.app` depende da disponibilidade e da configuração na conta Vercel; o nome do repositório não precisa ser igual ao nome do projeto.
+- Repositório: plynexa/Trendou
+- Branch: main
+- Root Directory: sites/air-fryer
+- Framework: Other
+- Build Command: vazio
+- Output Directory: . (definido no vercel.json da pasta)
+- Endereço: nome escolhido no painel, sujeito à disponibilidade
 
-## Manutenção
+A configuração da pasta mantém os caminhos /air-fryer/ usados pelos recursos da landing. A página abre em / e os recursos continuam funcionando.
 
-Edite `public/air-fryer/index.html` para mudar textos, preço e checkout; `styles.css` para aparência; `script.js` para encaminhamento dos parâmetros de campanha. Imagens estão em `assets/`.
+## Próximos produtos
 
-O preço aparece na oferta e na barra móvel; atualize ambos juntos. O checkout deve apresentar os mesmos valores e benefícios. Não há cobrança nem entrega automática implementada neste repositório: ambas dependem do checkout e do fluxo de entrega do vendedor.
+Crie sites/nome-do-produto com seus próprios arquivos e configurações. Importe o mesmo repositório em outro projeto Vercel e escolha essa pasta em Root Directory. Não substitua o conteúdo de outro produto.
 
-O PDF pago não está incluído no site. Antes de divulgar, confira o checkout, a entrega do material e acrescente contato real do vendedor e políticas aplicáveis. A personagem não representa uma autora, nutricionista ou cliente real. Não há depoimentos inventados, contagem regressiva ou promessa de emagrecimento.
+A pasta sites/vitrine contém apenas um README para que o GitHub preserve a pasta; ainda não deve ser publicada como um site pronto.
+
+## Oferta atual
+
+150 receitas em PDF por R$29,90, com três bônus confirmados: tabela de tempo e temperatura, cardápio de 30 dias com uma sugestão por dia e lista de compras base. Imagens, banner e capa seguem a identidade em preto e dourado. O checkout foi preservado.
+
+O PDF pago não fica no repositório. A entrega do material e os pagamentos dependem do checkout. Não armazene senhas ou chaves privadas no código.
 
 ## Verificação
 
-Validados: sintaxe JavaScript, links e arquivos locais, 5 CTAs para o checkout informado, preço atualizado e configuração de saída. Não foi realizado pagamento real nem teste de entrega do PDF. A publicação e conferência final na Vercel são realizadas pelo proprietário.
+A reorganização preserva os mesmos arquivos da landing, com imagens verificadas por hash. O comando de compatibilidade foi executado e sua saída conferida. A publicação na conta Vercel precisa concluir o novo deploy para refletir esta organização.

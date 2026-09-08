@@ -4,8 +4,9 @@
   "outputDirectory": "public",
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/air-fryer/index.html"
+      "destination": "/air-fryer/index.html",
+      "source": "/"
     }
-  ]
+  ],
+  "buildCommand": "node scripts/build.mjs"
 }
