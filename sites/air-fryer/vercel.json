@@ -1,11 +1,20 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "outputDirectory": ".",
+  "outputDirectory": "public",
   "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin/",
+      "destination": "/admin/index.html"
+    },
     {
       "source": "/air-fryer/:path*",
       "destination": "/:path*"
     }
-  ]
+  ],
+  "buildCommand": "node build.mjs"
 }

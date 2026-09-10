@@ -4,6 +4,14 @@
   "outputDirectory": "public",
   "rewrites": [
     {
+      "source": "/admin",
+      "destination": "/air-fryer/admin/index.html"
+    },
+    {
+      "source": "/admin/",
+      "destination": "/air-fryer/admin/index.html"
+    },
+    {
       "destination": "/air-fryer/index.html",
       "source": "/"
     }
