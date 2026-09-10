@@ -2,8 +2,9 @@ const { createHash, timingSafeEqual } = require('node:crypto');
 const { neon } = require('@neondatabase/serverless');
 const hash = s => createHash('sha256').update(String(s)).digest();
 const allowedSections = ['inicio','rotina','material','receitas','exemplos','bonus','como-usar','oferta','duvidas','final'];
+const validId = id => /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(id || ''));
 function normalize(b) {
- if (!b || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(b.id)) throw Error('invalid');
+ if (!b || !validId(b.id)) throw Error('invalid');
  const label = v => typeof v === 'string' && /^[a-zA-Z0-9_. -]{1,80}$/.test(v) ? v : 'nao-informado';
  const integer = (n,max) => { if (!Number.isInteger(n)||n<0||n>max) throw Error('invalid'); return n; };
  if (!Array.isArray(b.sections)||!Array.isArray(b.clicks)||b.sections.length>10||b.clicks.length>30) throw Error('invalid');
@@ -20,6 +21,7 @@ async function handler(req,res) {
  if (req.method==='GET' && action==='status') return res.status(200).json({enabled:configured});
  if (!configured) return res.status(503).json({error:'Métricas ainda não ativadas. Conecte o banco e configure o acesso na Vercel.'});
  const sql = neon(process.env.DATABASE_URL);
+ const authorized = () => timingSafeEqual(hash(req.headers.authorization||''),hash('Bearer '+process.env.ANALYTICS_ADMIN_KEY));
  try {
   if (req.method==='POST' && action==='collect') {
    if (req.headers.origin !== (process.env.ANALYTICS_ORIGIN || 'https://trendou-airfryer.vercel.app')) return res.status(403).json({error:'Origem não permitida.'});
@@ -36,8 +38,16 @@ async function handler(req,res) {
     WHERE trendou_visits.updates<300 AND trendou_visits.created_at>now()-interval '3 hours'`;
    return res.status(204).end();
   }
+  if (req.method==='DELETE' && action==='visit') {
+   if (!authorized()) return res.status(401).json({error:'Chave de acesso incorreta.'});
+   const id = String(req.query?.id || '');
+   if (!validId(id)) return res.status(400).json({error:'Visita inválida.'});
+   const deleted = await sql`DELETE FROM trendou_visits WHERE id=${id} RETURNING id`;
+   if (!deleted.length) return res.status(404).json({error:'Visita não encontrada.'});
+   return res.status(200).json({deleted:true,id});
+  }
   if (req.method!=='GET'||action!=='report') return res.status(405).json({error:'Método não permitido.'});
-  if (!timingSafeEqual(hash(req.headers.authorization||''),hash('Bearer '+process.env.ANALYTICS_ADMIN_KEY))) return res.status(401).json({error:'Chave de acesso incorreta.'});
+  if (!authorized()) return res.status(401).json({error:'Chave de acesso incorreta.'});
   const days = [1,7,30,90].includes(Number(req.query.days))?Number(req.query.days):7;
   // Retention is applied on each authenticated report; schedule the same DELETE daily for unattended retention.
   await sql`DELETE FROM trendou_visits WHERE created_at<now()-interval '90 days'`;
