@@ -5,3 +5,19 @@ body{background:#111;color:#f5f3ed}h1,h2,h3{font-weight:850}header{border-color:
 @media(max-width:800px){.hero-layout{gap:30px;grid-template-columns:.8fr 1.2fr}.hero-message h1{font-size:36px}.hero-copy{font-size:18px}.hero-figure{width:100%}.hero-message .button{width:100%;padding:17px 16px;font-size:12px}.food-figure img{max-height:480px;width:100%;object-position:center 35%}}
 @media(max-width:600px){.hero-layout{display:flex;flex-direction:column;gap:25px;margin-top:20px}.hero-figure{width:min(260px,80%)}.hero-message{text-align:center}.hero-message h1{font-size:38px}.hero-copy{font-size:18px}.product-banner{margin-bottom:24px;border-radius:5px}.hero{padding-top:20px}.hero-facts{font-size:12px}.hero-facts span{padding:0 12px}.offer-cover{width:160px}.announcement{font-size:11px;letter-spacing:.06em}.category-grid article>span{font-size:12px;letter-spacing:.03em}.mobile-bar small{font-size:12px}.mobile-bar .button{font-size:12px}.section .eyebrow{font-size:12px}.category-grid article{padding:18px 14px}}
 
+
+/* Harmonious vector arrows */
+.icon-wrap{display:inline-grid;place-items:center;flex:0 0 auto;width:32px;height:32px;border-radius:999px;transition:transform .2s ease,background .2s ease,border-color .2s ease}
+.icon-wrap svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.header-link{display:inline-flex;align-items:center;gap:10px}
+.header-link .icon-wrap{width:34px;height:34px;color:#f6c45b;background:#292318;border:1px solid #6b552a}
+.header-link span{margin-left:0}
+.header-link:hover .icon-wrap{transform:translate(2px,-2px);background:#3a2e18;border-color:#d2a848}
+.text-link{display:inline-flex;align-items:center;gap:10px}
+.text-link .icon-wrap{width:28px;height:28px;color:#f6c45b;background:#242016;border:1px solid #5e4b27}
+.text-link:hover .icon-wrap{transform:translateY(3px);border-color:#d2a848}
+.button .icon-wrap{width:34px;height:34px;color:#1b150a;background:#1b150a14;border:1px solid #1b150a38}
+.button .icon-wrap svg{width:19px;height:19px;stroke-width:2}
+.button:hover .icon-wrap{transform:translateX(4px);background:#1b150a20}
+@media(max-width:520px){.header-link{gap:8px}.header-link .icon-wrap{width:30px;height:30px}.button .icon-wrap{width:32px;height:32px}.mobile-bar .button{gap:10px}}
+@media(prefers-reduced-motion:reduce){.icon-wrap{transition:none}}
