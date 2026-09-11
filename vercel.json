@@ -2,19 +2,39 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "outputDirectory": "public",
+  "buildCommand": "node scripts/build.mjs",
   "rewrites": [
     {
       "source": "/admin",
+      "has": [{ "type": "host", "value": "trendou-airfryer.vercel.app" }],
       "destination": "/air-fryer/admin/index.html"
     },
     {
       "source": "/admin/",
+      "has": [{ "type": "host", "value": "trendou-airfryer.vercel.app" }],
       "destination": "/air-fryer/admin/index.html"
     },
     {
-      "destination": "/air-fryer/index.html",
-      "source": "/"
-    }
-  ],
-  "buildCommand": "node scripts/build.mjs"
+      "source": "/",
+      "has": [{ "type": "host", "value": "trendou-airfryer.vercel.app" }],
+      "destination": "/air-fryer/index.html"
+    },
+    {
+      "source": "/admin",
+      "has": [{ "type": "host", "value": "trendou-plynexa.vercel.app" }],
+      "destination": "/air-fryer/admin/index.html"
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "trendou-plynexa.vercel.app" }],
+      "destination": "/air-fryer/index.html"
+    },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/", "destination": "/admin/index.html" },
+    { "source": "/checkout/:slug", "destination": "/checkout/index.html" },
+    { "source": "/produto/:slug", "destination": "/produto.html" },
+    { "source": "/produtos", "destination": "/home/index.html" },
+    { "source": "/ofertas", "destination": "/home/index.html" },
+    { "source": "/", "destination": "/home/index.html" }
+  ]
 }
