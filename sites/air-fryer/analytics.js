@@ -5,7 +5,7 @@
  let enabled=false, state, timer, observer, last=performance.now(), activity=last, lastSent=0;
  const sec=['inicio','rotina','material','receitas','exemplos','bonus','como-usar','oferta','duvidas','final'];
  const sections=[...document.querySelectorAll('main section')];
- sections.forEach((el,i)=>el.dataset.metricSection=sec[i]||'');
+ sections.forEach((el,i)=>el.dataset.metricSection=el.id||sec[i]||'');
  const query=new URLSearchParams(location.search);
  const clean=v=>v && /^[a-zA-Z0-9_. -]{1,80}$/.test(v)?v:'nao-informado';
  const pendingSections=new Map();

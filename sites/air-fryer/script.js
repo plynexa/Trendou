@@ -11,4 +11,13 @@ document.querySelectorAll('a.checkout').forEach((link) => {
   });
   link.href = destination.toString();
 });
+const checkoutFrame = document.querySelector('.checkout-frame');
+if (checkoutFrame) {
+  const destination = new URL(checkoutFrame.src);
+  campaignKeys.forEach((key) => {
+    const value = incoming.get(key);
+    if (value && value.length <= 500) destination.searchParams.set(key, value);
+  });
+  checkoutFrame.src = destination.toString();
+}
 document.getElementById('year').textContent = String(new Date().getFullYear());
