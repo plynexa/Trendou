@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b0b0c"><title>Trendou Admin</title><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/admin/admin.css"></head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <a class="logo" href="/">TREND<span>OU</span></a>
+      <p class="side-label">CENTRAL</p>
+      <nav id="nav" hidden>
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="products">Produtos</button>
+        <button class="nav-btn" data-tab="categories">Categorias</button>
+        <button class="nav-btn" data-tab="orders">Pedidos</button>
+        <button class="nav-btn" data-tab="sites">Sites</button>
+      </nav>
+      <a class="site-link" href="/" target="_blank">Abrir Trendou ↗</a>
+    </aside>
+
+    <main class="admin-main">
+      <section id="login-card" class="login-card">
+        <span class="eyebrow">ÁREA ADMINISTRATIVA</span>
+        <h1>Gerencie a Trendou.</h1>
+        <p>Use a mesma chave administrativa configurada no servidor. Ela fica apenas nesta aba.</p>
+        <form id="login-form">
+          <label>Chave de acesso<input id="admin-key" type="password" minlength="32" autocomplete="current-password" placeholder="••••••••••••••••"></label>
+          <button class="button primary" type="submit">Entrar</button>
+          <button class="button ghost" id="local-mode" type="button">Abrir modo local</button>
+        </form>
+        <p id="login-status" class="muted"></p>
+      </section>
+
+      <div id="app" hidden>
+        <header class="admin-head"><div><span class="eyebrow">TRENDOU BUILDER</span><h1 id="page-title">Dashboard</h1></div><div class="head-actions"><span id="mode-badge" class="pill"></span><button id="logout" class="small-btn">Sair</button></div></header>
+
+        <section class="tab active" data-panel="dashboard">
+          <div class="metric-grid">
+            <article><span>Produtos</span><strong id="metric-products">0</strong></article>
+            <article><span>Categorias</span><strong id="metric-categories">0</strong></article>
+            <article><span>Pedidos</span><strong id="metric-orders">—</strong></article>
+            <article><span>SyncPay</span><strong id="metric-syncpay">…</strong></article>
+          </div>
+          <div class="admin-grid two">
+            <article class="panel"><h2>Atalhos</h2><div class="stack"><button class="button primary goto" data-go="products">+ Novo produto</button><a class="button ghost" href="https://trendou-airfryer.vercel.app/admin" target="_blank">Analytics Air Fryer ↗</a><a class="button ghost" href="https://trendou-airfryer.vercel.app" target="_blank">Abrir Air Fryer ↗</a></div></article>
+            <article class="panel"><h2>Status da estrutura</h2><div id="system-status" class="status-list"></div></article>
+          </div>
+        </section>
+
+        <section class="tab" data-panel="products">
+          <div class="toolbar-row"><p>Arraste os cards para mudar a ordem no catálogo.</p><button id="new-product" class="button primary">+ Criar produto</button></div>
+          <div id="product-list" class="sortable-list"></div>
+          <form id="product-form" class="editor" hidden>
+            <div class="editor-head"><h2 id="editor-title">Novo produto</h2><button type="button" id="close-editor" class="small-btn">Fechar</button></div>
+            <div class="form-grid">
+              <label>Nome<input name="name" required maxlength="120"></label>
+              <label>Slug<input name="slug" required maxlength="80" placeholder="meu-produto"></label>
+              <label>Tipo<select name="type"><option value="digital">Digital</option><option value="proprio">Produto próprio</option><option value="dropshipping">Dropshipping</option><option value="affiliate">Afiliado</option></select></label>
+              <label>Categoria<select name="category_slug" id="category-select"></select></label>
+              <label>Preço<input name="price" type="number" min="0" step="0.01"></label>
+              <label>Preço antigo<input name="old_price" type="number" min="0" step="0.01"></label>
+              <label class="span-2">Descrição<textarea name="description" rows="3"></textarea></label>
+              <label class="span-2">Imagem (URL ou caminho)<input name="image_url" placeholder="/air-fryer/assets/capa-air-fryer.jpg"></label>
+              <label class="span-2">Site externo opcional<input name="public_url" placeholder="https://..."></label>
+              <label>Checkout<select name="checkout_mode"><option value="native">Checkout Trendou</option><option value="external">Checkout externo</option><option value="affiliate">Link afiliado</option></select></label>
+              <label>Link do checkout/afiliado<input name="checkout_url" placeholder="https://..."></label>
+              <label class="span-2">Fornecedor (privado)<input name="supplier_url" placeholder="Link Shopee/fornecedor"></label>
+              <label class="span-2">Benefícios — um por linha<textarea name="benefits" rows="4"></textarea></label>
+              <label class="check"><input name="featured" type="checkbox"> Mostrar em Trend Ofertas</label>
+              <label class="check"><input name="shipping_required" type="checkbox"> Precisa de endereço</label>
+              <label class="check"><input name="active" type="checkbox" checked> Produto ativo</label>
+            </div>
+            <div class="editor-actions"><button class="button primary" type="submit">Salvar produto</button><button class="button ghost" id="duplicate-product" type="button">Duplicar</button><a id="preview-product" class="button ghost" target="_blank">Visualizar ↗</a></div>
+            <p id="product-status" class="muted"></p>
+          </form>
+        </section>
+
+        <section class="tab" data-panel="categories">
+          <div class="admin-grid two">
+            <form id="category-form" class="panel"><h2>Nova categoria</h2><label>Nome<input name="name" required maxlength="80"></label><label>Slug<input name="slug" maxlength="80"></label><button class="button primary" type="submit">Salvar categoria</button><p id="category-status" class="muted"></p></form>
+            <article class="panel"><h2>Categorias</h2><div id="category-list" class="category-list"></div></article>
+          </div>
+        </section>
+
+        <section class="tab" data-panel="orders">
+          <div class="toolbar-row"><p>Pagamentos gerados pelo checkout nativo e pedidos físicos.</p><button id="refresh-orders" class="small-btn">Atualizar</button></div>
+          <div id="orders-list" class="orders-list"><p class="muted">Carregando…</p></div>
+        </section>
+
+        <section class="tab" data-panel="sites">
+          <div class="panel"><h2>Sites e links</h2><p class="muted">Todo produto cadastrado já ganha uma página padrão em <code>/produto/slug</code>. Você também pode manter um site externo, como o Air Fryer.</p><div id="site-list" class="site-list"></div></div>
+          <div class="panel"><h2>Arquitetura atual</h2><div class="architecture"><div><b>Trendou Home</b><span>Catálogo, ofertas, admin e checkout</span></div><div><b>Air Fryer</b><span>Continua no link antigo e também aparece no catálogo</span></div><div><b>Próximos produtos</b><span>Podem usar página automática ou site próprio</span></div></div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="/admin/admin.js" defer></script>
+</body></html>
