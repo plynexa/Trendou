@@ -10,10 +10,13 @@ const airFryer = join(root, 'sites', 'air-fryer');
 await rm(publicDir, { recursive: true, force: true });
 await mkdir(publicDir, { recursive: true });
 
-// Trendou Home: catálogo, admin, páginas automáticas e checkout.
-for (const item of ['index.html','styles.css','app.js','produto.html','produto.js','admin','checkout']) {
+// Trendou Home: catálogo, páginas automáticas e checkout.
+for (const item of ['index.html','styles.css','app.js','produto.html','produto.js','checkout']) {
   await cp(join(home, item), join(publicDir, item), { recursive: true });
 }
+// Admin central em caminho físico próprio. /admin fica livre para os rewrites por domínio.
+await cp(join(home, 'admin'), join(publicDir, 'trendou-admin'), { recursive: true });
+
 // Mantém / sem um arquivo físico para que o rewrite por hostname possa escolher
 // Trendou Home ou Air Fryer sem alterar o endereço exibido no navegador.
 await mkdir(join(publicDir, 'home'), { recursive: true });
