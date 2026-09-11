@@ -1,5 +1,7 @@
 (() => {
-  const params=new URLSearchParams(location.search);const slug=params.get('slug')||'';
+  const params=new URLSearchParams(location.search);
+  const parts=location.pathname.split('/').filter(Boolean);
+  const slug=params.get('slug') || (parts[0]==='produto' && parts[1] && parts[1]!=='produto.html' ? parts[1] : '');
   const $=id=>document.getElementById(id);const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   fetch('/api/catalog?slug='+encodeURIComponent(slug),{cache:'no-store'}).then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Produto não encontrado');return d.product;}).then(p=>{
     document.title=p.name+' • Trendou';$('loading').remove();$('content').hidden=false;$('name').textContent=p.name;$('description').textContent=p.description||'';$('image').src=p.image_url||'';$('image').alt=p.name;$('category').textContent=p.category_slug||'Produto';$('price').textContent=money(p.price);
