@@ -21,16 +21,21 @@
     },
     {
       "source": "/admin",
-      "has": [{ "type": "host", "value": "trendou-plynexa.vercel.app" }],
+      "has": [{ "type": "host", "value": "trendo-airfryer-plynexa.vercel.app" }],
+      "destination": "/air-fryer/admin/index.html"
+    },
+    {
+      "source": "/admin/",
+      "has": [{ "type": "host", "value": "trendo-airfryer-plynexa.vercel.app" }],
       "destination": "/air-fryer/admin/index.html"
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "trendou-plynexa.vercel.app" }],
+      "has": [{ "type": "host", "value": "trendo-airfryer-plynexa.vercel.app" }],
       "destination": "/air-fryer/index.html"
     },
-    { "source": "/admin", "destination": "/admin/index.html" },
-    { "source": "/admin/", "destination": "/admin/index.html" },
+    { "source": "/admin", "destination": "/trendou-admin/index.html" },
+    { "source": "/admin/", "destination": "/trendou-admin/index.html" },
     { "source": "/checkout/:slug", "destination": "/checkout/index.html" },
     { "source": "/produto/:slug", "destination": "/produto.html" },
     { "source": "/produtos", "destination": "/home/index.html" },
