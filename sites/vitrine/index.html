@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0b0c">
+  <title>Trendou — produtos, ofertas e novidades</title>
+  <meta name="description" content="Trendou reúne produtos digitais, físicos e ofertas selecionadas em um só lugar.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="/">TREND<span>OU</span></a>
+    <nav>
+      <a href="#produtos">Produtos</a>
+      <a href="#ofertas">Trend Ofertas</a>
+      <a href="/admin">Admin</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">DESCOBRIU. VIROU TENDÊNCIA. CHEGOU NA TRENDOU.</span>
+        <h1>Produtos que chamam atenção <em>sem complicar sua compra.</em></h1>
+        <p>Uma vitrine simples para encontrar ofertas, produtos próprios e novidades que estão ganhando espaço.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#produtos">Ver produtos</a>
+          <a class="button ghost" href="#ofertas">Ver ofertas</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <span>DESTAQUE</span>
+        <strong>Air Fryer Todo Dia</strong>
+        <p>150 receitas + 3 bônus</p>
+        <b>R$ 29,90</b>
+        <a href="https://trendou-airfryer.vercel.app">Conhecer produto →</a>
+      </div>
+    </section>
+
+    <section class="section" id="produtos">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">CATÁLOGO</span>
+          <h2>Produtos Trendou</h2>
+        </div>
+        <div class="filters" id="filters"></div>
+      </div>
+      <div id="catalog-status" class="status">Carregando produtos…</div>
+      <div id="products" class="product-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="section offers" id="ofertas">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">TREND OFERTAS</span>
+          <h2>Ofertas em destaque</h2>
+        </div>
+      </div>
+      <p class="section-intro">Aqui podem entrar produtos próprios, dropshipping e links de afiliado. Quando for afiliado, o botão leva para a plataforma parceira.</p>
+      <div id="featured" class="product-grid compact"></div>
+    </section>
+
+    <section class="how">
+      <article><span>01</span><h3>Escolha</h3><p>Veja os produtos por categoria e encontre o que faz sentido para você.</p></article>
+      <article><span>02</span><h3>Compre</h3><p>Produtos próprios usam checkout seguro. Ofertas afiliadas abrem a loja parceira.</p></article>
+      <article><span>03</span><h3>Acompanhe</h3><p>Pedidos físicos poderão ser acompanhados pela Trendou conforme o catálogo evolui.</p></article>
+    </section>
+  </main>
+
+  <footer>
+    <a class="logo" href="/">TREND<span>OU</span></a>
+    <p>Produtos próprios e ofertas selecionadas. Links de afiliado podem gerar comissão para a Trendou sem custo adicional para você.</p>
+    <span>© <span id="year"></span> Trendou</span>
+  </footer>
+
+  <template id="product-template">
+    <article class="product-card">
+      <div class="product-media"><img alt="" loading="lazy"><span class="badge"></span></div>
+      <div class="product-body">
+        <small class="category"></small>
+        <h3></h3>
+        <p class="description"></p>
+        <div class="price"><del></del><strong></strong></div>
+        <div class="card-actions"></div>
+      </div>
+    </article>
+  </template>
+  <script src="/app.js" defer></script>
+</body>
+</html>
