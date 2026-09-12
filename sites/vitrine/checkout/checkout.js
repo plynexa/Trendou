@@ -2,14 +2,41 @@
   const $=id=>document.getElementById(id);
   const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const pathParts=location.pathname.split('/').filter(Boolean);
-  const slug=new URLSearchParams(location.search).get('produto') || (pathParts[0]==='checkout'&&pathParts[1]&&pathParts[1]!=='index.html'?pathParts[1]:'');
-  let product=null;let identifier='';let pollTimer=null;
+  const params=new URLSearchParams(location.search);
+  const slug=params.get('produto') || (pathParts[0]==='checkout'&&pathParts[1]&&pathParts[1]!=='index.html'?pathParts[1]:'');
+  let product=null;let identifier='';let pollTimer=null;let checkoutStarted=false;
+
+  const validVisitId=v=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(v||''));
+  const clean=(v,max=160)=>String(v||'').trim().slice(0,max);
+  const visitKey='trendou_visit_id';
+  let visitId=params.get('visit_id')||sessionStorage.getItem(visitKey)||'';
+  if(!validVisitId(visitId))visitId=crypto.randomUUID();
+  sessionStorage.setItem(visitKey,visitId);
+  const attribution={
+    visit_id:visitId,
+    source:clean(params.get('utm_source')||params.get('src')||'direto'),
+    campaign:clean(params.get('utm_campaign')||'nao-informado'),
+    creative:clean(params.get('utm_content')||'nao-informado'),
+    medium:clean(params.get('utm_medium')||'nao-informado'),
+    term:clean(params.get('utm_term')||'nao-informado'),
+    fbclid:clean(params.get('fbclid'),500)
+  };
 
   function setStatus(text){$('checkout-status').textContent=text;$('checkout-status').hidden=false;}
   function onlyDigits(v){return String(v||'').replace(/\D/g,'');}
   function formatCpf(v){v=onlyDigits(v).slice(0,11);return v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');}
   function formatPhone(v){v=onlyDigits(v).slice(0,11);if(v.length<=10)return v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2');return v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2');}
   function formatZip(v){v=onlyDigits(v).slice(0,8);return v.replace(/(\d{5})(\d)/,'$1-$2');}
+  function signalCheckoutStart(){
+    if(checkoutStarted)return;checkoutStarted=true;
+    if(window.parent!==window)window.parent.postMessage({type:'trendou-checkout-start'},location.origin);
+  }
+
+  async function saveAttribution(id){
+    try{
+      await fetch('/api/attribution',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier:id,attribution}),keepalive:true});
+    }catch{}
+  }
 
   async function load(){
     if(!slug){setStatus('Produto não informado.');return;}
@@ -30,12 +57,13 @@
   $('checkout-form').elements.cpf.addEventListener('input',e=>e.target.value=formatCpf(e.target.value));
   $('checkout-form').elements.phone.addEventListener('input',e=>e.target.value=formatPhone(e.target.value));
   $('checkout-form').elements.zip.addEventListener('input',e=>e.target.value=formatZip(e.target.value));
+  $('checkout-form').addEventListener('focusin',signalCheckoutStart,{once:true});
 
   $('checkout-form').onsubmit=async e=>{
-    e.preventDefault();const form=e.currentTarget;const submit=form.querySelector('button[type=submit]');submit.disabled=true;submit.textContent='GERANDO PIX…';
+    e.preventDefault();signalCheckoutStart();const form=e.currentTarget;const submit=form.querySelector('button[type=submit]');submit.disabled=true;submit.textContent='GERANDO PIX…';
     const fd=new FormData(form);const payload={product_slug:product.slug,customer:{name:fd.get('name'),cpf:fd.get('cpf'),email:fd.get('email'),phone:fd.get('phone')},shipping:{zip:fd.get('zip'),street:fd.get('street'),number:fd.get('number'),complement:fd.get('complement'),neighborhood:fd.get('neighborhood'),city:fd.get('city'),state:fd.get('state')}};
     try{
-      const response=await fetch('/api/syncpay?action=create-pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw Error(data.error||'Não foi possível gerar o Pix.');identifier=data.identifier;form.hidden=true;$('pix-area').hidden=false;$('pix-code').value=data.pix_code;
+      const response=await fetch('/api/syncpay?action=create-pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw Error(data.error||'Não foi possível gerar o Pix.');identifier=data.identifier;await saveAttribution(identifier);form.hidden=true;$('pix-area').hidden=false;$('pix-code').value=data.pix_code;
       $('qr').replaceChildren();if(window.QRCode)new QRCode($('qr'),{text:data.pix_code,width:220,height:220,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
       pollTimer=setInterval(checkPayment,5000);setTimeout(checkPayment,1500);
     }catch(err){setStatus(err.message);submit.disabled=false;submit.textContent='GERAR PIX';}
