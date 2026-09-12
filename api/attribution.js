@@ -48,20 +48,14 @@ module.exports = async function handler(req, res) {
 
   try {
     const sql = neon(process.env.DATABASE_URL);
-    const order = await sql`SELECT identifier FROM trendou_orders WHERE identifier=${identifier} LIMIT 1`;
-    if (!order.length) return json(res, 404, { error: 'Pedido não encontrado.' });
+    const order = await sql`SELECT identifier FROM trendou_orders
+      WHERE identifier=${identifier} AND created_at > now() - interval '30 minutes'
+      LIMIT 1`;
+    if (!order.length) return json(res, 404, { error: 'Pedido não encontrado ou janela de atribuição expirada.' });
     await sql`INSERT INTO trendou_order_attribution
       (identifier,visit_id,source,campaign,creative,medium,term,fbclid)
       VALUES (${identifier},${attribution.visit_id},${attribution.source},${attribution.campaign},${attribution.creative},${attribution.medium},${attribution.term},${attribution.fbclid})
-      ON CONFLICT (identifier) DO UPDATE SET
-        visit_id=EXCLUDED.visit_id,
-        source=EXCLUDED.source,
-        campaign=EXCLUDED.campaign,
-        creative=EXCLUDED.creative,
-        medium=EXCLUDED.medium,
-        term=EXCLUDED.term,
-        fbclid=EXCLUDED.fbclid,
-        updated_at=now()`;
+      ON CONFLICT (identifier) DO NOTHING`;
     return json(res, 200, { ok: true });
   } catch (error) {
     console.error('attribution_error', error);
