@@ -1,0 +1,146 @@
+/* Tema público Trendou — branco + rosa, feminino sem ficar infantil */
+body{
+  --bg:#fffafb;
+  --panel:#ffffff;
+  --panel2:#fff3f7;
+  --text:#2a1822;
+  --muted:#7a6670;
+  --gold:#d81b60;
+  --gold2:#f04f93;
+  --line:#f0d7e2;
+  --white:#ffffff;
+  background:
+    radial-gradient(circle at 88% 7%, rgba(240,79,147,.13), transparent 28%),
+    radial-gradient(circle at 8% 26%, rgba(255,193,218,.16), transparent 24%),
+    var(--bg);
+  color:var(--text);
+}
+
+.topbar{
+  background:rgba(255,250,252,.92);
+  border-bottom:1px solid rgba(216,27,96,.12);
+  box-shadow:0 10px 34px rgba(94,35,62,.05);
+}
+.topbar nav{color:#5f4b55}
+.topbar nav a{font-weight:700}
+.topbar nav a:hover{color:#d81b60}
+.logo{color:#24161d}
+.logo span{color:#e31f6f}
+
+.hero{position:relative}
+.hero::before{
+  content:"";
+  position:absolute;
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  right:18%;
+  top:42px;
+  background:rgba(240,79,147,.08);
+  filter:blur(3px);
+  pointer-events:none;
+}
+.eyebrow{
+  color:#c91859;
+  background:#fff0f6;
+  border:1px solid #f6cddd;
+  padding:7px 10px;
+  border-radius:999px;
+  letter-spacing:.14em;
+}
+.hero h1,.section h2{color:#25151e}
+.hero h1 em{color:#e31f6f}
+.hero-copy>p{color:#6f5a65}
+
+.button{
+  border-color:#ebc7d7;
+  border-radius:14px;
+  transition:.2s ease;
+}
+.button:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(216,27,96,.12)}
+.button.primary{
+  background:linear-gradient(135deg,#f04f93,#d81b60);
+  color:#fff;
+  box-shadow:0 10px 26px rgba(216,27,96,.22);
+}
+.button.ghost{background:#fff;color:#b51650;border-color:#efbfd2}
+
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#ffffff,#fff0f6);
+  border:1px solid #f1c9da;
+  box-shadow:0 28px 70px rgba(140,48,88,.12);
+}
+.hero-card::after{
+  content:"✦";
+  position:absolute;
+  right:22px;
+  top:16px;
+  color:#ef76a8;
+  font-size:27px;
+}
+.hero-card span{color:#c91859}
+.hero-card strong{color:#2a1822}
+.hero-card p{color:#7c6872}
+.hero-card b{color:#d81b60}
+.hero-card a{color:#b51650}
+
+.section{position:relative}
+.section-intro{color:#7a6670}
+.filters{gap:10px}
+.filter{
+  background:#fff;
+  color:#5f4b55;
+  border-color:#efd4df;
+  box-shadow:0 5px 16px rgba(94,35,62,.04);
+}
+.filter:hover{border-color:#e79ab9;color:#bb1550}
+.filter.active{background:#e31f6f;color:#fff;border-color:#e31f6f}
+.status{background:#fff;border-color:#e9c7d5;color:#7a6670}
+
+.product-card{
+  background:#fff;
+  border-color:#efd9e2;
+  box-shadow:0 14px 36px rgba(94,35,62,.07);
+  transition:.2s ease;
+}
+.product-card:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(117,39,73,.11)}
+.product-media{background:#fff1f6}
+.badge{
+  background:rgba(255,255,255,.94);
+  color:#b51650;
+  border:1px solid #f0c8d8;
+  box-shadow:0 5px 18px rgba(89,35,59,.08);
+}
+.product-body small{color:#c91859}
+.product-body h3{color:#2a1822}
+.description{color:#7a6670}
+.price del{color:#a48e98}
+.price strong{color:#d81b60}
+.card-actions a{border-color:#ebccd8;color:#7a425c;background:#fff}
+.card-actions a.primary{background:#e31f6f;color:#fff;border-color:#e31f6f}
+
+.offers{
+  border-top:1px solid #f1dce4;
+  background:linear-gradient(180deg,rgba(255,242,247,.55),rgba(255,255,255,0));
+  border-radius:28px;
+  padding-left:28px;
+  padding-right:28px;
+}
+.how article{
+  background:#fff6f9;
+  border-color:#efd7e1;
+  box-shadow:0 10px 28px rgba(94,35,62,.05);
+}
+.how span{color:#d81b60}
+.how h3{color:#2a1822}
+.how p{color:#7a6670}
+
+footer{border-top:1px solid #f1dce4;color:#7a6670}
+.empty{background:#fff;border-color:#e8cbd7;color:#7a6670}
+
+@media(max-width:620px){
+  .hero::before{width:130px;height:130px;right:2%;top:8px}
+  .offers{padding-left:16px;padding-right:16px;border-radius:22px}
+}
