@@ -15,6 +15,9 @@ function withAttribution(url) {
     if (value && value.length <= 500) destination.searchParams.set(key, value);
   });
   destination.searchParams.set('visit_id', visitId);
+  if (destination.origin !== window.location.origin) {
+    destination.searchParams.set('parent_origin', window.location.origin);
+  }
   return destination.toString();
 }
 
