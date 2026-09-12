@@ -1,7 +1,6 @@
 const { neon } = require('@neondatabase/serverless');
 const { dbConfigured, isAdmin } = require('../server/trendou.cjs');
 
-const PAID = ['completed','paid','approved','succeeded'];
 const json = (res, status, body) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -26,8 +25,8 @@ module.exports = async function handler(req, res) {
       WHERE created_at >= now() - make_interval(days => ${days})`,
       sql`SELECT
         count(*)::int AS pix_generated,
-        count(*) FILTER (WHERE lower(coalesce(payment_status,'')) = ANY(${PAID}))::int AS paid_orders,
-        coalesce(sum(amount) FILTER (WHERE lower(coalesce(payment_status,'')) = ANY(${PAID})),0)::numeric AS revenue
+        count(*) FILTER (WHERE lower(coalesce(payment_status,'')) IN ('completed','paid','approved','succeeded'))::int AS paid_orders,
+        coalesce(sum(amount) FILTER (WHERE lower(coalesce(payment_status,'')) IN ('completed','paid','approved','succeeded')),0)::numeric AS revenue
       FROM trendou_orders
       WHERE created_at >= now() - make_interval(days => ${days})`,
       sql`WITH visits AS (
@@ -40,8 +39,8 @@ module.exports = async function handler(req, res) {
       ), orders AS (
         SELECT a.source,a.campaign,a.creative,
           count(*)::int AS pix_generated,
-          count(*) FILTER (WHERE lower(coalesce(o.payment_status,'')) = ANY(${PAID}))::int AS paid_orders,
-          coalesce(sum(o.amount) FILTER (WHERE lower(coalesce(o.payment_status,'')) = ANY(${PAID})),0)::numeric AS revenue
+          count(*) FILTER (WHERE lower(coalesce(o.payment_status,'')) IN ('completed','paid','approved','succeeded'))::int AS paid_orders,
+          coalesce(sum(o.amount) FILTER (WHERE lower(coalesce(o.payment_status,'')) IN ('completed','paid','approved','succeeded')),0)::numeric AS revenue
         FROM trendou_order_attribution a
         JOIN trendou_orders o ON o.identifier=a.identifier
         WHERE o.created_at >= now() - make_interval(days => ${days})
