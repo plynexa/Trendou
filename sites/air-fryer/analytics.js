@@ -49,7 +49,8 @@
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){send();pendingSections.clear();}else{last=activity=performance.now();if(observer){sections.forEach(el=>{observer.unobserve(el);observer.observe(el);});}}});
  addEventListener('pagehide',send);
  addEventListener('message',e=>{
-  if(e.origin!==location.origin||!enabled||!state)return;
+  const trustedOrigin=e.origin===location.origin||e.origin==='https://trendou-site.vercel.app';
+  if(!trustedOrigin||!enabled||!state)return;
   if(e.data?.type==='trendou-checkout-start'){
    state.clicks.add('checkout-oferta');
    send();
