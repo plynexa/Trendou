@@ -21,6 +21,15 @@
     term:clean(params.get('utm_term')||'nao-informado'),
     fbclid:clean(params.get('fbclid'),500)
   };
+  const parentOrigin=(()=>{
+    const value=String(params.get('parent_origin')||'');
+    if(!value)return location.origin;
+    try{
+      const u=new URL(value);
+      if(u.protocol==='https:'&&u.hostname.endsWith('.vercel.app'))return u.origin;
+    }catch{}
+    return location.origin;
+  })();
 
   function setStatus(text){$('checkout-status').textContent=text;$('checkout-status').hidden=false;}
   function onlyDigits(v){return String(v||'').replace(/\D/g,'');}
@@ -29,7 +38,7 @@
   function formatZip(v){v=onlyDigits(v).slice(0,8);return v.replace(/(\d{5})(\d)/,'$1-$2');}
   function signalCheckoutStart(){
     if(checkoutStarted)return;checkoutStarted=true;
-    if(window.parent!==window)window.parent.postMessage({type:'trendou-checkout-start'},location.origin);
+    if(window.parent!==window)window.parent.postMessage({type:'trendou-checkout-start'},parentOrigin);
   }
 
   async function saveAttribution(id){
