@@ -9,13 +9,13 @@
   if(!confirm('Excluir esta visita das métricas? Essa ação não pode ser desfeita.'))return;
   button.disabled=true;button.textContent='Excluindo…';
   try{
-   const response=await fetch('/api/analytics?action=visit&id='+encodeURIComponent(id),{method:'DELETE',headers:{Authorization:'Bearer '+token},cache:'no-store'});
+   const response=await fetch('/api/analytics?action=visit&id='+encodeURIComponent(id),{method:'DELETE',headers:{'x-api-key':token},cache:'no-store'});
    const d=await response.json();if(!response.ok)throw Error(d.error||'Não foi possível excluir a visita.');
    $('status').textContent='Visita excluída. Atualizando métricas…';await load();
   }catch(e){button.disabled=false;button.textContent='Excluir visita';$('status').textContent=e.message;}
  }
  async function load(){if(loading)return;loading=true;$('status').textContent='Consultando métricas…';try{
-  const response=await fetch('/api/analytics?action=report&days='+$('days').value,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+  const response=await fetch('/api/analytics?action=report&days='+$('days').value,{headers:{'x-api-key':token},cache:'no-store'});
   const d=await response.json();if(!response.ok)throw Error(d.error||'Não foi possível carregar.');
   $('login').hidden=true;$('report').hidden=false;$('key').value='';$('cards').replaceChildren();
   const t=d.totals;[[t.visits,'Visitas registradas'],[t.active_seconds+' s','Tempo ativo médio'],[t.scroll+'%','Rolagem máxima média'],[t.checkout,'Visitas que clicaram no checkout']].forEach(([v,l])=>{const div=node('div','');div.className='card';div.append(node('strong',v),node('span',l));$('cards').append(div);});

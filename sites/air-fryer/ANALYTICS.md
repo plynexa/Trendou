@@ -7,10 +7,10 @@ Implementação preparada para o projeto existente na Vercel, com raiz no reposi
 1. Na Vercel, abra o projeto Air Fryer → Storage/Marketplace → Neon. Crie ou conecte um banco dedicado. Confira o plano e os limites antes de contratar. Não foi criado banco automaticamente neste trabalho.
 2. No SQL Editor do Neon, execute `sites/air-fryer/db/analytics.sql` uma vez.
 3. Em Settings → Environment Variables do projeto, configure para Production: `DATABASE_URL` (conexão Neon), `ANALYTICS_ADMIN_KEY` (chave aleatória com pelo menos 32 caracteres, preferencialmente 64), `ANALYTICS_ORIGIN=https://trendou-airfryer.vercel.app` e `ANALYTICS_ENABLED=true`.
-4. Não publique essas credenciais no GitHub, não coloque prefixos públicos nelas e não as envie no chat. Gere a chave com um gerenciador de senhas. O administrador digita essa chave no painel; o navegador só a mantém em memória e a transmite por HTTPS no cabeçalho Authorization.
+4. Não publique essas credenciais no GitHub, não coloque prefixos públicos nelas e não as envie no chat. Gere a chave com um gerenciador de senhas. O administrador digita essa chave no painel; o navegador só a mantém em memória e a transmite por HTTPS no cabeçalho `x-api-key`.
 5. Adicione no Vercel Firewall uma regra de rate limiting para `/api/analytics`, sobretudo `action=collect`. Origem e payload são validados e cada visita tem teto de atualizações, mas clientes externos podem falsificar Origin/identificadores. A coleta é pública, não é prova antifraude. Ajuste limites ao tráfego legítimo; não bloqueie todos os visitantes de redes compartilhadas.
 6. Faça Redeploy. Abra `/api/analytics?action=status`: deve responder `enabled: true`.
-7. Em uma aba nova, visite a landing com `?utm_source=teste&utm_campaign=validacao&utm_content=imagem`, permita métricas, role a página e clique numa dúvida. Acesse `/admin`, informe a chave e confira a visita. Teste também recusar: nenhum POST de coleta deve ocorrer. Confirme que a API de relatório sem chave responde 401 e que nenhuma credencial está em arquivos públicos.
+7. Em uma aba nova, visite a landing com `?utm_source=teste&utm_campaign=validacao&utm_content=imagem`, permita métricas, role a página e clique numa dúvida. Acesse `/admin`, informe a chave e confira a visita. Teste também recusar: nenhum POST de coleta deve ocorrer. Confirme que a API de relatório sem `x-api-key` responde 401 e que nenhuma credencial está em arquivos públicos. Uma chamada administrativa direta usa `x-api-key: SUA_CHAVE`; `/api/analytics` retorna JSON com visitas, tempo médio, página, origens, seções, cliques e visitas recentes.
 8. Confira que assets e checkout continuam funcionando. Teste o projeto com a Root Directory que você já utiliza. Não há verificação de banco real/deploy concluída até essas etapas serem executadas.
 
 ## O que mede
@@ -29,3 +29,17 @@ Desativar: `ANALYTICS_ENABLED=false` e Redeploy. Rodar localmente: `npm install`
 
 - https://github.com/neondatabase/serverless — driver HTTP e consultas parametrizadas.
 - https://vercel.com/docs/functions/runtimes/node-js — funções em api e dependências.
+
+
+## Secrets no Cloudflare Worker
+
+Cadastre os valores no Worker, nunca em `wrangler.toml`, JavaScript, HTML ou GitHub:
+
+```bash
+npx wrangler secret put ANALYTICS_ADMIN_KEY
+npx wrangler secret put DATABASE_URL
+npx wrangler secret put SYNCPAY_CLIENT_ID
+npx wrangler secret put SYNCPAY_CLIENT_SECRET
+```
+
+A integração atual da SyncPay usa duas credenciais (`SYNCPAY_CLIENT_ID` e `SYNCPAY_CLIENT_SECRET`), e não uma chave única no código. O Worker deve receber esses bindings como secrets. `ANALYTICS_ORIGIN` e `ANALYTICS_ENABLED` não são segredos e podem ser variáveis normais. Não use prefixos públicos como `VITE_`, `NEXT_PUBLIC_` ou equivalentes.

@@ -16,12 +16,16 @@ function normalize(b) {
 }
 async function handler(req,res) {
  res.setHeader('Cache-Control','no-store'); res.setHeader('X-Content-Type-Options','nosniff');
- const action = String(req.query?.action || '');
+ const action = String(req.query?.action || (req.method === 'GET' ? 'report' : ''));
  const configured = process.env.ANALYTICS_ENABLED === 'true' && !!process.env.DATABASE_URL && (process.env.ANALYTICS_ADMIN_KEY||'').length >=32;
  if (req.method==='GET' && action==='status') return res.status(200).json({enabled:configured});
  if (!configured) return res.status(503).json({error:'Métricas ainda não ativadas. Conecte o banco e configure o acesso na Vercel.'});
  const sql = neon(process.env.DATABASE_URL);
- const authorized = () => timingSafeEqual(hash(req.headers.authorization||''),hash('Bearer '+process.env.ANALYTICS_ADMIN_KEY));
+ const authorized = () => {
+  const provided = String(req.headers['x-api-key'] || '');
+  const secret = String(process.env.ANALYTICS_ADMIN_KEY || '');
+  return provided.length > 0 && secret.length >= 32 && timingSafeEqual(hash(provided), hash(secret));
+ };
  try {
   if (req.method==='POST' && action==='collect') {
    if (req.headers.origin !== (process.env.ANALYTICS_ORIGIN || 'https://trendou-airfryer.vercel.app')) return res.status(403).json({error:'Origem não permitida.'});
@@ -64,7 +68,13 @@ async function handler(req,res) {
    sql`SELECT id,created_at,source,creative,device,active_seconds,scroll,sections,clicks,checkout
     FROM trendou_visits WHERE created_at>=now()-make_interval(days=>${days}) ORDER BY created_at DESC LIMIT 100`
   ]);
-  return res.status(200).json({totals:totals[0],sources,sections,clicks,recent,days});
+  const total = totals[0] || { visits: 0, active_seconds: 0, scroll: 0, checkout: 0 };
+  return res.status(200).json({
+   visits: total.visits,
+   average_active_seconds: total.active_seconds,
+   pages: [{ path: '/', visits: total.visits, average_active_seconds: total.active_seconds, average_scroll: total.scroll }],
+   totals: total, sources, sections, clicks, recent, days
+  });
  } catch { return res.status(503).json({error:'Não foi possível acessar as métricas. Confira a conexão e a tabela do banco.'}); }
 }
 module.exports={handler,normalize};
