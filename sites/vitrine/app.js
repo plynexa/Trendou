@@ -5,15 +5,29 @@
   const filtersEl = document.getElementById('filters');
   const statusEl = document.getElementById('catalog-status');
   const template = document.getElementById('product-template');
+  const params = new URLSearchParams(location.search);
+  const attributionKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','src','fbclid'];
+  const visitKey = 'trendou_visit_id';
+  const validVisitId = value => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''));
+  let visitId = params.get('visit_id') || sessionStorage.getItem(visitKey) || '';
+  if(!validVisitId(visitId)) visitId = crypto.randomUUID();
+  sessionStorage.setItem(visitKey,visitId);
   let catalog = {products:[],categories:[]};
   let activeCategory = 'todos';
 
+  function withAttribution(url){
+    const destination = new URL(url,location.origin);
+    attributionKeys.forEach(key=>{const value=params.get(key);if(value&&value.length<=500)destination.searchParams.set(key,value);});
+    destination.searchParams.set('visit_id',visitId);
+    return destination.toString();
+  }
+
   function actionUrls(product){
-    const detail = product.public_url || `/produto/${encodeURIComponent(product.slug)}`;
+    const detail = withAttribution(product.public_url || `/produto/${encodeURIComponent(product.slug)}`);
     let buy = `/checkout/${encodeURIComponent(product.slug)}`;
     if(product.checkout_mode === 'external' && product.checkout_url) buy = product.checkout_url;
     if(product.checkout_mode === 'affiliate' && product.checkout_url) buy = product.checkout_url;
-    return {detail,buy};
+    return {detail,buy:withAttribution(buy)};
   }
 
   function card(product){
@@ -33,10 +47,10 @@
     const {detail,buy} = actionUrls(product);
     const view = document.createElement('a');
     view.href = detail; view.textContent = 'Ver produto';
-    if(/^https?:\/\//.test(detail)) view.target = '_blank';
+    if(new URL(detail).origin!==location.origin) view.target = '_blank';
     const buyLink = document.createElement('a');
     buyLink.href = buy; buyLink.textContent = product.checkout_mode === 'affiliate' ? 'Ver oferta' : 'Comprar'; buyLink.className='primary';
-    if(product.checkout_mode === 'affiliate' || /^https?:\/\//.test(buy)) { buyLink.target='_blank'; if(product.checkout_mode === 'affiliate') buyLink.rel='sponsored nofollow noopener'; }
+    if(product.checkout_mode === 'affiliate' || new URL(buy).origin!==location.origin) { buyLink.target='_blank'; if(product.checkout_mode === 'affiliate') buyLink.rel='sponsored nofollow noopener'; }
     actions.append(view,buyLink);
     return node;
   }
