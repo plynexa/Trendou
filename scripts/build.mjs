@@ -11,7 +11,7 @@ await rm(publicDir, { recursive: true, force: true });
 await mkdir(publicDir, { recursive: true });
 
 // Trendou Home: catálogo, páginas automáticas e checkout.
-for (const item of ['index.html','styles.css','app.js','produto.html','produto.js','checkout']) {
+for (const item of ['index.html','styles.css','theme-feminino.css','app.js','produto.html','produto.js','checkout']) {
   await cp(join(home, item), join(publicDir, item), { recursive: true });
 }
 // Admin central em caminho físico próprio. /admin fica livre para os rewrites por domínio.
